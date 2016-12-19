@@ -1,0 +1,33 @@
+info:
+  component: Sentry2
+
+  # cloud:
+  #   conablefig:
+  #     failFast: true
+  #     discovery:
+  #       end: true
+
+zuul:
+  routes:
+    everywhere:
+      path: /**
+  host:
+    socket-timeout-millis: 300000
+
+server:
+  port: 10000
+
+logging:
+  level:
+    ROOT: INFO
+
+management:
+  port: 10003
+
+spring:
+  http:
+    multipart:
+      max-file-size: 1024Mb
+      max-request-size: 1024Mb
+  mvc:
+    dispatch-trace-request: true
