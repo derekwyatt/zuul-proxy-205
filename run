@@ -1,0 +1,45 @@
+#!/bin/bash
+
+function waitOnIt
+{
+  arg=$1
+  c=100
+  while [[ $c -gt 0 ]]
+  do
+    if [[ -n $(netstat -na | grep "\.$arg .*LISTEN") ]]; then
+      break
+    fi
+    echo "Waiting for listen on port $arg"
+    sleep 0.5
+    ((c=c-1))
+  done
+}
+
+(cd server; npm install)
+(cd server; node app.js &)
+nodepid=$?
+waitOnIt 50001
+
+(gradle bootRun &)
+zuulpid=$?
+waitOnIt 10000
+
+sleep 5
+echo; echo; echo; echo; echo; echo; echo
+
+echo ================ 200 =================
+echo "GOING STRAIT TO NODE"
+curl -f -v -m 5 http://localhost:50001/200
+
+echo "PROXYING THROUGH ZUUL"
+curl -f -v -m 5 http://localhost:10000/200
+
+echo ================ 205 =================
+echo "GOING STRAIT TO NODE"
+curl -f -v -m 5 http://localhost:50001/205
+
+echo "PROXYING THROUGH ZUUL"
+curl -f -v -m 5 http://localhost:10000/205
+
+
+trap "kill $nodepid $zuulpid" EXIT

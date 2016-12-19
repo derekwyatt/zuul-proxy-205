@@ -9,6 +9,9 @@ var server = app.listen(50001, function () {
     console.log("Listening on port %s...", server.address().port);
 });
 
-app.get("/", function(req, rsp) {
+app.get("/205", function(req, rsp) {
   rsp.status(205).send("");
+});
+app.get("/200", function(req, rsp) {
+  rsp.status(200).send("");
 });
